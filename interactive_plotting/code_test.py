@@ -11,23 +11,41 @@ import numpy as np
 import pickle
 
 from interactive_lib import ExplanationData
-from interactive_lib import plot_explanation
+from interactive_lib import PlotData
 ######################################################################
 ti = time.time()
 ################################################################################
 explanation_file = "spec-0967-52636-0339_exp_dict.dill"
 "spec-7258-56605-0800_exp_dict.dill"
-data = ExplanationData(explanation_file=explanation_file)
-sdss_name = data.sdss_name
-spec = data.spec
+data_explanation = ExplanationData(explanation_file=explanation_file)
+sdss_name = data_explanation.sdss_name
+spec = data_explanation.spec
 n_line = 0
 (wave_exp, flux_exp, weights_exp,
-    k_width, metric, feature_selection) = data.get_explanation_data(n_line)
+    k_width, metric, feature_selection) = data_explanation.get_explanation_data(n_line)
+################################################################################
+# vmin vmax for colorbar
+explanations_dict = data_explanation.get_serialized_data()
+
+weights_explanation = []
+
+for value in explanations_dict.values():
+    array_explanation = value[1]
+    weights_explanation.append(np.nanmin(array_explanation[:, 1]))
+    weights_explanation.append(np.nanmax(array_explanation[:, 1]))
+
+w_min = min(weights_explanation)
+w_max = max(weights_explanation)
 
 ################################################################################
-fig, ax, scatter, cbar = plot_explanation(spec, wave_exp, flux_exp, weights_exp, sdss_name,
-    k_width, feature_selection, metric,
-    s=3., linewidth=1., alpha=0.7, cmap='plasma_r')
+# Data plot
+explanation_plot = PlotData(spec, sdss_name, vmin=w_min, vmax=w_max)
+################################################################################
+
+################################################################################
+fig, ax, line, scatter = plot_explanation(spec, wave_exp, flux_exp, weights_exp,
+    sdss_name, k_width, feature_selection, metric,
+    s=3., linewidth=1., alpha=0.7)
 
 ################################################################################
 ax_key_plus = plt.axes([0.7, 0.05, 0.1, 0.075])
