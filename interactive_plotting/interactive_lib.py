@@ -48,14 +48,15 @@ class PlotData:
         self.vmin = vmin
         self.vmax = vmax
         self._fig = None
+        self._cmap = None
 
-    def colorbar_explanation(self):
+    def _colorbar_explanation(self):
         # Make axes with dimensions as desired.
-        ax_cb = self._fig.add_axes([0.7, 0.1, 0.03, 0.8])
+        ax_cb = self._fig.add_axes([0.91, 0.025, 0.03, 0.95])
 
         # Set the colormap and norm to correspond to the data for which
         # the colorbar will be used.
-        cmap = mpl.cm.plasma
+        self._cmap = mpl.cm.plasma
         norm = mpl.colors.Normalize(vmin=self.vmin, vmax=self.vmax)
 
         # ColorbarBase derives from ScalarMappable and puts a colorbar
@@ -63,7 +64,7 @@ class PlotData:
         # standalone colorbar.  There are many more kwargs, but the
         # following gives a basic continuous colorbar with ticks
         # and labels.
-        cb = mpl.colorbar.ColorbarBase(ax_cb, cmap=cmap,
+        cb = mpl.colorbar.ColorbarBase(ax_cb, cmap=self._cmap,
                                         norm=norm,
                                         orientation='vertical')
         cb.set_label('Normalized weights')
@@ -71,15 +72,27 @@ class PlotData:
         return cb
 
     def plot_explanation(self,
-        wave_exp, flx_exp, kernel_width, feature_selection,metric,
+        wave_exp, flx_exp, weights_explanation,
+        kernel_width, feature_selection, metric,
         s=3., linewidth=1., alpha=0.7):
 
+        a = np.sort(weights_explanation)
+        print([f'{i:.2E}' for i in a[:2]])
+        print([f'{i:.2E}' for i in a[-2:]])
+
         self._fig, ax = plt.subplots(figsize=(10, 5))
-        plt.subplots_adjust(bottom=0.2)
+        plt.subplots_adjust(left=0.08, right=0.9)
+
         line, = ax.plot(self.spec, linewidth=linewidth, alpha=alpha)
-        scatter = ax.scatter(wave_exp, flx_exp, s=s)
-        ax_cb = self.colorbar_explanation()
+
+        scatter = ax.scatter(wave_exp, flx_exp, s=s,
+            c=weights_explanation, cmap='plasma',
+            vmin=self.vmin, vmax=self.vmax, alpha=1.)
+
+        ax_cb = self._colorbar_explanation()
         ax.set_title(
         f'{self.sdss_name}: {metric}, {feature_selection}, k_width={kernel_width}')
 
-        return self._fig, ax, line, scatter
+        # plt.tight_layout()
+
+        return self._fig, ax, ax_cb, line, scatter
