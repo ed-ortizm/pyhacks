@@ -30,14 +30,15 @@ n_line = 0
 explanations_dict = data_explanation.get_serialized_data()
 
 weights_explanation = []
-
-for value in explanations_dict.values():
-    array_explanation = value[1]
-    weights_explanation.append(np.nanmin(array_explanation[:, 1]))
-    weights_explanation.append(np.nanmax(array_explanation[:, 1]))
-
-w_min = min(weights_explanation)
-w_max = max(weights_explanation)
+weights_array = np.concatenate([w[1][:, 1] for w in explanations_dict.values()])
+w_min, w_max = np.nanpercentile(weights_array, (20, 80)) 
+# for value in explanations_dict.values():
+#     array_explanation = value[1]
+#     weights_explanation.append(np.nanmin(array_explanation[:, 1]))
+#     weights_explanation.append(np.nanmax(array_explanation[:, 1]))
+#
+# w_min = np.min(weights_explanation)
+# w_max = np.max(weights_explanation)
 print(w_min, w_max)
 ################################################################################
 # Data plot
@@ -63,9 +64,9 @@ def line_plus(event):
     (wave_exp, flux_exp, weights_exp, k_width, metric,
         feature_selection) = data_explanation.get_explanation_data(n_line)
 
-    # a = np.sort(weights_exp)
-    # print([f'{i:.2E}' for i in a[:3]])
-    # print([f'{i:.2E}' for i in a[-3:]])
+    a = np.sort(weights_exp)
+    print([f'{i:.2E}' for i in a[:3]])
+    print([f'{i:.2E}' for i in a[-3:]])
 
     scatter_updated_data = np.array(([wave_exp,flux_exp])).T
     scatter.set_offsets(scatter_updated_data)

@@ -52,7 +52,7 @@ class PlotData:
 
     def _colorbar_explanation(self):
         # Make axes with dimensions as desired.
-        ax_cb = self._fig.add_axes([0.91, 0.025, 0.03, 0.95])
+        ax_cb = self._fig.add_axes([0.91, 0.05, 0.03, 0.9])
 
         # Set the colormap and norm to correspond to the data for which
         # the colorbar will be used.
@@ -66,8 +66,9 @@ class PlotData:
         # and labels.
         cb = mpl.colorbar.ColorbarBase(ax_cb, cmap=self._cmap,
                                         norm=norm,
-                                        orientation='vertical')
+                                        orientation='vertical', extend='both')
         cb.set_label('Normalized weights')
+
 
         return cb
 
