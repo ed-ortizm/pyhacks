@@ -15,30 +15,34 @@ from interactive_lib import PlotData
 ######################################################################
 ti = time.time()
 ################################################################################
-explanation_file = 'spec-2283-53729-0329_exp_dict.dill'
-#'spec-8744-58124-0638_exp_dict.dill'
-#'spec-0967-52636-0339_exp_dict.dill'
-#'spec-7258-56605-0800_exp_dict.dill'
-data_explanation = ExplanationData(explanation_file=explanation_file)
+# Directories
+working_dir = '/home/edgar/Documents/pyhacks/interactive_plotting'
+data_dir = f'{working_dir}/data'
+################################################################################
+explanation_file = 'spec-2283-53729-0329_exp_dict.pk'
+#'spec-8744-58124-0638_exp_dict.pk'
+#'spec-0967-52636-0339_exp_dict.pk'
+#'spec-7258-56605-0800_exp_dict.pk'
+
+data_explanation = ExplanationData(
+    explanation_file=f'{data_dir}/{explanation_file}')
+
 sdss_name = data_explanation.sdss_name
+
 spec = data_explanation.spec
+
 n_line = 0
+
 (wave_exp, flux_exp, weights_exp, k_width,
     metric, feature_selection) = data_explanation.get_explanation_data(n_line)
+
 ################################################################################
 # vmin vmax for colorbar
 explanations_dict = data_explanation.get_serialized_data()
 
-weights_explanation = []
 weights_array = np.concatenate([w[1][:, 1] for w in explanations_dict.values()])
-w_min, w_max = np.nanpercentile(weights_array, (20, 80)) 
-# for value in explanations_dict.values():
-#     array_explanation = value[1]
-#     weights_explanation.append(np.nanmin(array_explanation[:, 1]))
-#     weights_explanation.append(np.nanmax(array_explanation[:, 1]))
-#
-# w_min = np.min(weights_explanation)
-# w_max = np.max(weights_explanation)
+w_min, w_max = np.nanpercentile(weights_array, (20, 80))
+
 print(w_min, w_max)
 ################################################################################
 # Data plot

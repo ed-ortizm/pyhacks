@@ -3,17 +3,18 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import Button
 import numpy as np
 import pickle
+
+from constants import ssdss_dir
 ###############################################################################
 class ExplanationData:
 
     def __init__(self, explanation_file):
 
         self.explanation_file = explanation_file
-        self.sdss_directory = "/home/edgar/Documents/pyhacks/interactive_plotting"
         # "/home/edgar/zorro/SDSSdata/data_proc"
-        self.sdss_name = self.explanation_file.split('_')[0]
+        self.sdss_name = self.explanation_file.split('/')[-1].split('_')[0]
         # self.explanation_file.split('/')[-1].split('_')[0]
-        self.spec = np.load(f'{self.sdss_directory}/{self.sdss_name}.npy')
+        self.spec = np.load(f'{sdss_dir}/{self.sdss_name}.npy')
 
     def get_explanation_data(self, n_line):
 

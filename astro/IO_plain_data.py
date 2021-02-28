@@ -12,6 +12,8 @@ fname = 'GCs.txt'
 data = ascii.read(f'{working_dir}/{fname}',
     guess=False, data_start=3, delimiter='\t')
 print(data)
+# By default, read() will try to guess the table format by trying all of
+# the supported formats.
 ###############################################################################
 t_f = time.time()
 print(f'Running time: {t_f - t_i: .2f} s')
